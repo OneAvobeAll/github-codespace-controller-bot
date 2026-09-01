@@ -1,0 +1,44 @@
+# GitHub Codespace Controller Telegram Bot - Docker Compose
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: codespace-bot-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - codespace-bot-network
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codespace-controller-bot
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      GITHUB_API_TOKEN: ${GITHUB_API_TOKEN}
+      MONGODB_URI: mongodb://root:password@mongodb:27017/codespace_bot?authSource=admin
+      DATABASE_NAME: codespace_bot
+      LOG_LEVEL: INFO
+      DEBUG: "False"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./:/app
+    networks:
+      - codespace-bot-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  codespace-bot-network:
+    driver: bridge
