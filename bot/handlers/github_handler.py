@@ -33,10 +33,15 @@ async def set_env_vars(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['current_app_id'] = app_id
     context.user_data['action'] = 'set_env_vars'
     
-    await query.edit_message_text(
-        text="🌍 **Set Environment Variables**\n\nEnter environment variables (one per line):\nFormat: KEY=value\nExample:\n```\nNODE_ENV=production\nDATABASE_URL=mongodb://...
-```"
-    )
+    env_vars_text = """🌍 **Set Environment Variables**
+
+Enter environment variables (one per line):
+Format: KEY=value
+Example:
+NODE_ENV=production
+DATABASE_URL=mongodb://..."""
+    
+    await query.edit_message_text(text=env_vars_text)
 
 
 async def set_build_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
